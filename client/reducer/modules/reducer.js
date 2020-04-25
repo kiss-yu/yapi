@@ -3,6 +3,7 @@ import user from './user.js';
 import group from './group.js';
 import project from './project.js';
 import inter from './interface.js';
+import model from './interfaceModel.js';
 import interfaceCol from './interfaceCol.js';
 import news from './news.js';
 import addInterface from './addInterface.js';
@@ -20,7 +21,8 @@ const reducerModules = {
   news,
   addInterface,
   menu,
-  follow
+  follow,
+  model
 };
 emitHook('add_reducer', reducerModules);
 

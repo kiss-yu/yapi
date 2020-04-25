@@ -14,6 +14,8 @@ import InterfaceContent from './InterfaceList/InterfaceContent.js';
 import InterfaceColMenu from './InterfaceCol/InterfaceColMenu.js';
 import InterfaceColContent from './InterfaceCol/InterfaceColContent.js';
 import InterfaceCaseContent from './InterfaceCol/InterfaceCaseContent.js';
+import InterfaceModel from './InterfaceModel/InterfaceModel.js';
+import InterfaceModelContent from './InterfaceModel/InterfaceModelContent.js';
 import { getProject } from '../../../reducer/modules/project';
 import { setColData } from '../../../reducer/modules/interfaceCol.js';
 const contentRouter = {
@@ -35,6 +37,15 @@ const InterfaceRoute = props => {
     C = InterfaceColContent;
   } else if (props.match.params.action === 'case') {
     C = InterfaceCaseContent;
+  } else if (props.match.params.action === 'projectModel') {
+      if (!props.match.params.actionId) {
+          C = InterfaceModel;
+      }
+      else if (!isNaN(props.match.params.actionId)) {
+          C = InterfaceModelContent;
+      } else if (props.match.params.actionId.indexOf('cat_') === 0) {
+          C = InterfaceModel;
+      }
   } else {
     const params = props.match.params;
     props.history.replace('/project/' + params.id + '/interface/api');
@@ -90,10 +101,48 @@ class Interface extends Component {
     });
     // await this.props.fetchInterfaceColList(this.props.match.params.id)
   }
+  tabs(activeKey) {
+    if (activeKey === 'api') {
+        return (
+          <InterfaceMenu
+                router={matchPath(this.props.location.pathname, contentRouter)}
+                projectId={this.props.match.params.id}
+            />
+        )
+    }
+    else if (activeKey === 'colOrCase') {
+        return (
+          <InterfaceColMenu
+                router={matchPath(this.props.location.pathname, contentRouter)}
+                projectId={this.props.match.params.id}
+            />
+        )
+    }
+    else if (activeKey === 'projectModel') {
+        return (
+          <InterfaceModel
+                router={matchPath(this.props.location.pathname, contentRouter)}
+                projectId={this.props.match.params.id}
+            />
+        )
+    } else {
+        return (<div/>)
+    }
+  }
+  getActiveKey(action) {
+      if (action === 'api') {
+          return "api"
+      } else if (action === 'col') {
+          return "colOrCase";
+      } else if (action === 'case') {
+          return "colOrCase";
+      } else if (action === 'projectModel') {
+          return "projectModel";
+      }
+  }
   render() {
     const { action } = this.props.match.params;
-    // const activeKey = this.state.curkey;
-    const activeKey = action === 'api' ? 'api' : 'colOrCase';
+    const activeKey = this.getActiveKey(action);
 
     return (
       <Layout style={{ minHeight: 'calc(100vh - 156px)', marginLeft: '24px', marginTop: '24px' }}>
@@ -101,19 +150,10 @@ class Interface extends Component {
           <div className="left-menu">
             <Tabs type="card" className="tabs-large" activeKey={activeKey} onChange={this.onChange}>
               <Tabs.TabPane tab="接口列表" key="api" />
+              <Tabs.TabPane tab="项目模型" key="projectModel" />
               <Tabs.TabPane tab="测试集合" key="colOrCase" />
             </Tabs>
-            {activeKey === 'api' ? (
-              <InterfaceMenu
-                router={matchPath(this.props.location.pathname, contentRouter)}
-                projectId={this.props.match.params.id}
-              />
-            ) : (
-              <InterfaceColMenu
-                router={matchPath(this.props.location.pathname, contentRouter)}
-                projectId={this.props.match.params.id}
-              />
-            )}
+            {this.tabs(activeKey)}
           </div>
         </Sider>
         <Layout>

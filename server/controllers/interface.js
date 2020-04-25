@@ -911,6 +911,7 @@ class interfaceController extends baseController {
         name: params.name,
         project_id: params.project_id,
         desc: params.desc,
+        catType: params.catType,
         uid: this.getUid(),
         add_time: yapi.commons.time(),
         up_time: yapi.commons.time()

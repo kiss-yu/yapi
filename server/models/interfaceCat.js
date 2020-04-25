@@ -17,7 +17,8 @@ class interfaceCat extends baseModel {
       desc: String,
       add_time: Number,
       up_time: Number,
-      index: { type: Number, default: 0 }
+      index: { type: Number, default: 0 },
+      catType: { type: String, enum:['interface', 'model'], default: 'interface'}
     };
   }
 
@@ -34,16 +35,25 @@ class interfaceCat extends baseModel {
       .exec();
   }
 
-  checkRepeat(name) {
-    return this.model.countDocuments({
-      name: name
-    });
+  checkRepeat(name, catType) {
+    return this.model.countDocuments(
+        catType ? {
+                    name: name,
+                    catType
+                  }:{
+                    name: name,
+                    $or:[{catType: null}, {catType: 'interface'}]
+                 });
   }
 
-  list(project_id) {
+  list(project_id, catType) {
     return this.model
-      .find({
-        project_id: project_id
+      .find(catType ? {
+        project_id: project_id,
+        catType
+      }: {
+        project_id: project_id,
+        $or:[{catType: null}, {catType: 'interface'}]
       })
       .sort({ index: 1 })
       .exec();

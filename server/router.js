@@ -1,5 +1,6 @@
 const koaRouter = require('koa-router');
 const interfaceController = require('./controllers/interface.js');
+const interfaceModelController = require('./controllers/interfaceModel.js');
 const groupController = require('./controllers/group.js');
 const userController = require('./controllers/user.js');
 const interfaceColController = require('./controllers/interfaceCol.js');
@@ -18,6 +19,10 @@ let INTERFACE_CONFIG = {
   interface: {
     prefix: '/interface/',
     controller: interfaceController
+  },
+  interfaceModel: {
+    prefix: '/interface-model/',
+    controller: interfaceModelController
   },
   user: {
     prefix: '/user/',
@@ -61,7 +66,7 @@ let routerConfig = {
       method: 'get'
     },
 
-    
+
     {
       action: 'list',
       path: 'list',
@@ -386,6 +391,43 @@ let routerConfig = {
     {
       action: 'schema2json',
       path: 'schema2json',
+      method: 'post'
+    }
+  ],
+  interfaceModel: [
+    {
+      action: 'saveInterfaceModel',
+      path: 'saveInterfaceModel',
+      method: 'post'
+    },
+    {
+      action: 'updateInterface',
+      path: 'updateInterface',
+      method: 'post'
+    },
+    {
+      action: 'deleteModel',
+      path: 'deleteModel',
+      method: 'post'
+    },
+    {
+      action: 'detail',
+      path: 'detail',
+      method: 'get'
+    },
+    {
+      action: 'list',
+      path: 'list',
+      method: 'post'
+    },
+    {
+      action: 'modelCatList',
+      path: 'modelCatList',
+      method: 'get'
+    },
+    {
+      action: 'delCat',
+      path: 'delCat',
       method: 'post'
     }
   ],
