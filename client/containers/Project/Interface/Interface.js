@@ -15,6 +15,7 @@ import InterfaceColMenu from './InterfaceCol/InterfaceColMenu.js';
 import InterfaceColContent from './InterfaceCol/InterfaceColContent.js';
 import InterfaceCaseContent from './InterfaceCol/InterfaceCaseContent.js';
 import InterfaceModel from './InterfaceModel/InterfaceModel.js';
+import InterfaceModelList from './InterfaceModel/InterfaceModelList.js';
 import InterfaceModelContent from './InterfaceModel/InterfaceModelContent.js';
 import { getProject } from '../../../reducer/modules/project';
 import { setColData } from '../../../reducer/modules/interfaceCol.js';
@@ -38,13 +39,10 @@ const InterfaceRoute = props => {
   } else if (props.match.params.action === 'case') {
     C = InterfaceCaseContent;
   } else if (props.match.params.action === 'projectModel') {
-      if (!props.match.params.actionId) {
-          C = InterfaceModel;
-      }
-      else if (!isNaN(props.match.params.actionId)) {
-          C = InterfaceModelContent;
-      } else if (props.match.params.actionId.indexOf('cat_') === 0) {
-          C = InterfaceModel;
+      if (!isNaN(props.match.params.actionId) || props.match.params.actionId === 'add' ) {
+          return <InterfaceModelContent {...props} pageType = { props.match.params.actionId === 'add' ? 'add' : 'edit'} />;
+      } else {
+          C = InterfaceModelList;
       }
   } else {
     const params = props.match.params;

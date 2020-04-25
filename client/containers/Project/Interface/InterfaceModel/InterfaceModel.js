@@ -33,7 +33,6 @@ const headHeight = 240; // menu顶部到网页顶部部分的高度
 )
 class InterfaceModel extends Component {
     static propTypes = {
-        redux: PropTypes.object,
         match: PropTypes.object,
         projectId: PropTypes.string,
         initInterfaceModel: PropTypes.func,
@@ -59,7 +58,7 @@ class InterfaceModel extends Component {
     componentWillMount() {
         this.props.initInterfaceModel();
         if (this.props.projectId) {
-            this.props.fetchInterfaceModelCatList(this.props.projectId);
+            this.getList();
         }
     }
 
@@ -68,7 +67,7 @@ class InterfaceModel extends Component {
     };
 
     getList() {
-        return Promise.resolve();
+        return this.props.fetchInterfaceModelCatList(this.props.projectId);
     }
     showConfirm = data => {
         // let that = this;
@@ -116,10 +115,19 @@ class InterfaceModel extends Component {
     };
 
     getSelects = (type) => {
+        const params = new URLSearchParams(this.props.location.search);
+        if (params.get('catId')) {
+            return [params.get('catId')];
+        }
         let { pathname } = this.props.location;
-
+        console.log(this.props)
         let data = pathname.split("cat_");
-        return data && data.length === 1 ? type ? [data[1]] : this.state.expands ?  [data[1]] : [] : []
+        if (data && data.length === 2) {
+            if (type || this.state.expands) {
+                return [data[1]];
+            }
+        }
+        return ['root'];
     }
 
     changeExpands = () => {
@@ -135,7 +143,8 @@ class InterfaceModel extends Component {
             ...data,
             catType: 'model'
         }).then(() => {
-            message.success('接口分类添加成功');
+            message.success('模型分类添加成功');
+            this.getList();
             this.setState({
                 editCat: null
             })
@@ -241,24 +250,32 @@ class InterfaceModel extends Component {
               >
               <Tree
                       className="interface-list"
-                      expandedKeys={this.getSelects(true)}
-                      selectedKeys={this.getSelects(false)}
+                      expandedKeys={this.getSelects(false)}
+                      selectedKeys={this.getSelects(true)}
                       onExpand={this.onExpand}
                       draggable
                       onDrop={this.onDrop}
                   >
                 <TreeNode className="item-all-interface"
-                                title={
-                                  <Link
-                                        onClick={e => {
-                                            e.stopPropagation();
-                                            this.changeExpands();
-                                        }}
-                                        to={'/project/' + matchParams.id + '/interface/projectModel'}
-                                    >
-                                    <Icon type="folder" style={{marginRight: 5}}/>
-                                        全部模型
-                                  </Link>
+                          title={
+                            <div className="container-title"
+                                   onClick={() => {
+                                       this.props.history.push('/project/' + this.props.projectId + '/interface/projectModel/');
+                                   }}
+                              >
+
+                              <Link
+                                      onClick={e => {
+                                          e.stopPropagation();
+                                          this.changeExpands();
+                                      }}
+                                      to={'/project/' + matchParams.id + '/interface/projectModel'}
+                                  >
+                                <Icon type="folder" style={{marginRight: 5}}/>
+                                      全部模型
+                              </Link>
+                            </div>
+
                                 }
                                 key="root"
                       />
@@ -309,20 +326,19 @@ class InterfaceModel extends Component {
                                                           />
                                                     </Tooltip>
                                                     <Tooltip title="添加模型">
-                                                      <Link
-                                                              className="interface-item"
-                                                              to={'/project/' + matchParams.id + '/interface/projectModel/cat_' + item._id}
-                                                          >
-                                                        <Icon type="plus"
-                                                                    className="interface-delete-icon"/>
-                                                      </Link>
+                                                      <Icon type="plus" className="interface-delete-icon"
+                                                        onClick={e => {
+                                                            e.stopPropagation();
+                                                            this.props.history.push('/project/' + matchParams.id + '/interface/projectModel/add?catId=' + item._id)
+                                                        }}
+                                                        />
                                                     </Tooltip>
                                                   </div>) : null
                                               }
 
                                         </div>
                                       }
-                                      key={'cat_' + item._id}
+                                      key={item._id}
                                       className={`interface-item-nav ${(item.list || []).length ? '' : 'cat_switch_hidden'}`}
                                   >
                                   {(item.list || []).map(itemInterfaceModelCreate)}

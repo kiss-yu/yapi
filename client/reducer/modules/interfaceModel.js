@@ -154,7 +154,7 @@ export function saveInterfaceModel(model) {
  * project_id,
  * interfaceName
  * */
-export function updateInterface(data) {
+export function updateInterfaceModel(data) {
     return postJson('/api/interface-model/updateInterface', data);
 }
 
